@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}{{ request.endpoint|default('', True) | title}} {% endblock %} | {{ site_name }}</title>
+</head>
+<body>
+    {% block main %}{% endblock %}
+</body>
+</html>
