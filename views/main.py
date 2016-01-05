@@ -18,3 +18,8 @@ def index():
 @blueprint.route(u'/👋')
 def hi():
     return 'Hi %s!!' % flask.request.args.get('name', 'Anon')
+
+
+@blueprint.route(u'/ben')
+def ben():
+    return "Hey Ben"
