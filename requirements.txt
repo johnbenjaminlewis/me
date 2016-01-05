@@ -1,0 +1,3 @@
+Flask==0.10.1
+Flask-Assets==0.11
+Flask-WTF==0.12
