@@ -37,7 +37,7 @@ def git_pull():
     """Pull the latest version of the codebase.
     """
     with cd('~/repos/me'):
-        sudo('git fetch origin && git reset --hard origin/master')
+        run('git fetch origin && git reset --hard origin/master')
 
 
 def restart_wsgi():
