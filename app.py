@@ -24,4 +24,4 @@ def register_views(app):
 
 
 def setup_jinja(app):
-    app.jinja_env.globals['site_name'] = 'JohnBenjaminLewis.com'
+    app.jinja_env.globals['site_name'] = 'benlew.is'

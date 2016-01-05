@@ -7,7 +7,7 @@ BLUEPRINT_MAP = {}
 
 
 blueprint = flask.Blueprint('main', __name__)
-url_prefix = '/'
+url_prefix = ''
 
 
 @blueprint.route('/')
@@ -17,9 +17,4 @@ def index():
 
 @blueprint.route(u'/👋')
 def hi():
-    return 'Hi %s!!' % flask.request.args.get('name', 'Anon')
-
-
-@blueprint.route(u'/ben')
-def ben():
-    return "Hey Ben"
+    return flask.render_template('amy.j2')
