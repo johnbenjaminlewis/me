@@ -1,55 +1,66 @@
 # -*- coding: utf-8 -*-
 """This is the command line package. The main application is defined in
-`commands/__init__.py`.
+`{this_file}`.
 
 Individual modules can show up as separate CLI App arguments, grouping similar
 functions together. More on this later...
 """
-from __future__ import absolute_import
+import logging
+from importlib import import_module
+
 import click
-from IPython import embed
-
-# Modules to import as subgroups in the cli app
-from . import oneoffs
-from . import server
-from .utils import write
 
 
-menu_items = (
-    oneoffs,
-    server,
+MENU_GROUPS = (
+    '.server',
+    '.shell',
 )
 
 
-@click.group(help=__doc__)
-@click.option('--test_mode', default=False, is_flag=True,
-              help='Use test config')
-@click.pass_context
-def cli_app(ctx, test_mode):
-    if test_mode:
-        write('Using test mode', fg='green', err=True)
-    else:
-        write('Using production mode!', fg='yellow', err=True)
+log = logging.getLogger(__name__)
 
 
-@click.command()
-@click.pass_context
-def shell(ctx):
-    """ Run in IPython shell
+def create_cli(menu_groups):
+    """Similar to create_app, creates a click instance and returns it.
+
+    :param menu_groups: a list of package names to import
     """
-    from app import create_app
-    app = create_app()
-    embed()
+    @click.group(help=__doc__.format(this_file=__file__))
+    @click.option('--test_mode', default=False, is_flag=True,
+                  help='Use test config')
+    @click.pass_context
+    def cli_app(ctx, test_mode):
+        if test_mode:
+            click.secho('Using test mode', fg='green', err=True)
+        else:
+            click.secho('Using production mode!', fg='yellow', err=True)
+
+    # Import menu groups
+    try:
+        menu_groups = [import_module(g, package=__name__) for g in menu_groups]
+    except ImportError:
+        click.secho('Cannot import module "{}" from package "{}"'.format(
+                    g, __name__), fg='red', bold=True)
+        raise SystemExit(1)
+
+    # Register menu groups
+    for group in menu_groups:
+        group_name = group.__name__.split('.')[-1]
+        group_doc = group.__doc__
+
+        # Grab iterable of all objects defined in the module
+        objects = group.__dict__.itervalues()
+        commands = [o for o in objects if isinstance(o, click.Command)]
+        if not commands:
+            log.warn('No commands found in %s', group.__name__)
+
+        subgroup = click.Group(group_name, help=group_doc)
+        for command in commands:
+            subgroup.add_command(command)
+
+        cli_app.add_command(subgroup)
+
+    return cli_app
 
 
-# Register sub menu items
-for item in menu_items:
-    subgroup = click.Group(item.NAME, help=item.DOC)
-    for command in item.COMMANDS:
-        subgroup.add_command(command)
-
-    cli_app.add_command(subgroup)
-
-
-# Register additional commands
-cli_app.add_command(shell)
+cli_app = create_cli(MENU_GROUPS)
