@@ -1,12 +1,8 @@
 #!/usr/bin/env python
-# TODO: port to Click
-import IPython
-
-from app import create_app
-
-
-app = create_app()
+""" The main entry point for this app
+"""
 
 
 if __name__ == '__main__':
-    IPython.embed()
+    from commands import cli_app
+    cli_app(obj={})
