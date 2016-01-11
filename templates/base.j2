@@ -1,9 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	{# Put CSS imports here #}
+    {%- assets "site_css" %}
+    <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
+    {%- endassets %}
     <title>{% block title %}{{ request.endpoint|default('', True) | title}} {% endblock %} | {{ site_name }}</title>
 </head>
 <body>
     {% block main %}{% endblock %}
+
+    {# Put all JS imports here #}
+    {%- assets "site_js" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {%- endassets %}
 </body>
 </html>
