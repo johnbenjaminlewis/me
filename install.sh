@@ -56,6 +56,7 @@ install_pip_reqs() {
 
 
 install_npm() {
+    rm -rf "$DIR/node_modules"
     cd "$DIR" && npm install
 }
 

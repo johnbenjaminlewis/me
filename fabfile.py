@@ -2,12 +2,7 @@
 # Thanks @nficano (https://github.com/nficano)
 from __future__ import absolute_import
 from contextlib import contextmanager
-from fabric.api import cd
-from fabric.api import env
-from fabric.api import prefix
-from fabric.api import put
-from fabric.api import run
-from fabric.api import sudo
+from fabric.api import cd, env, prefix, run, sudo
 
 env.hosts = ['benlew.is']
 # Use authentication information stored in `~/.ssh/config`.
@@ -28,23 +23,23 @@ def virtualenv(name):
 def deploy():
     """Deploy updates to "production".
     """
-    git_pull()
-    pip_update()
-    run_tests()
-    restart_wsgi()
+    for command in (git_pull, pip_update, run_tests, restart_wsgi):
+        res = command()
+        if res.return_code != 0:
+            raise SystemExit('Command %s failed' % command.__name__)
 
 
 def git_pull():
     """Pull the latest version of the codebase.
     """
     with cd('~/repos/me'):
-        run('git fetch origin && git reset --hard origin/master')
+        return run('git fetch origin && git reset --hard origin/master')
 
 
 def restart_wsgi():
     """Gracefully restart wsgi.
     """
-    sudo("restart benlew.is")
+    return sudo("restart benlew.is")
 
 
 def pip_update():
@@ -53,7 +48,7 @@ def pip_update():
     """
     with virtualenv("benlew.is"):
         with cd('~/repos/me'):
-            run("./install.sh")
+            return run("./install.sh")
 
 
 def run_tests():
@@ -61,4 +56,4 @@ def run_tests():
     """
     with virtualenv("benlew.is"):
         with cd('~/repos/me'):
-            run("nosetests")
+            return run("nosetests")
