@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import logging
+import os
 
 import flask
 from flask.ext.assets import Bundle, Environment
@@ -16,10 +17,19 @@ def create_app(debug=False):
     logging.getLogger('werkzeug').addHandler(logging.FileHandler('access.log'))
 
     app = flask.Flask(__name__)
+    register_node_bin(app.root_path)
     register_assets(app, debug)
     register_views(app)
     setup_jinja(app)
     return app
+
+
+def register_node_bin(root_path):
+    # TODO: This should get moved to a config module
+    node_bin = os.path.join(root_path, 'node_modules', '.bin')
+    if os.path.exists(node_bin):
+        log.info('Adding local node binaries to system path')
+        os.environ['PATH'] = ':'.join((node_bin, os.environ['PATH']))
 
 
 def register_assets(app, debug=False):
@@ -28,7 +38,7 @@ def register_assets(app, debug=False):
     """
     assets = Environment(app)
     assets.debug = debug
-    assets.auto_build = debug
+    assets.auto_build = True
     assets.manifest = 'file'
     assets.append_path(app.root_path)
 
@@ -36,14 +46,14 @@ def register_assets(app, debug=False):
         'static_src/lib/jquery/jquery.js',
         'static_src/lib/bootstrap/js/dist/*.js',
         filters=('uglifyjs',),
-        output='js/bundle.$(version)s.js'
+        output='js/bundle.js'
     )
     assets.register('site_js', site_js)
 
     site_css = Bundle(
         'static_src/lib/bootstrap/dist/css/bootstrap.css',
         filters=('cssmin',),
-        output='css/bundle.$(version)s.css'
+        output='css/bundle.css'
     )
     assets.register('site_css', site_css)
 
