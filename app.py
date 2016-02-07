@@ -60,7 +60,7 @@ def register_assets(app, debug=False):
 
 def register_views(app):
     for bp in BLUEPRINTS:
-        log.info('Registering blueprint %s', bp.blueprint)
+        log.info('Registering blueprint "%s"', bp.blueprint.name)
         app.register_blueprint(bp.blueprint, url_prefix=bp.url_prefix)
 
 

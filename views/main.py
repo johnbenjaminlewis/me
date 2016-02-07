@@ -3,9 +3,6 @@ from __future__ import absolute_import
 import flask
 
 
-BLUEPRINT_MAP = {}
-
-
 blueprint = flask.Blueprint('main', __name__)
 url_prefix = ''
 
@@ -17,4 +14,5 @@ def index():
 
 @blueprint.route(u'/👋')
 def hi():
-    return flask.render_template('amy.j2')
+    name = flask.request.args.get('name', 'Anonymous')
+    return flask.render_template('hi.j2', name=name)
