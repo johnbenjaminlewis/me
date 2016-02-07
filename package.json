@@ -1,0 +1,26 @@
+{
+  "name": "me",
+  "version": "1.0.0",
+  "description": "My webpage",
+  "main": "index.js",
+  "dependencies": {
+      "uglify": "*",
+      "uglifyjs": "*"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnbenjaminlewis/me.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/johnbenjaminlewis/me/issues"
+  },
+  "homepage": "https://github.com/johnbenjaminlewis/me#readme"
+}

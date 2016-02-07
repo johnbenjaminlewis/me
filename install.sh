@@ -55,4 +55,15 @@ install_pip_reqs() {
 }
 
 
-install_pip_reqs
+install_npm() {
+    cd "$DIR" && npm install
+}
+
+
+main() {
+    install_pip_reqs
+    install_npm
+}
+
+
+main
