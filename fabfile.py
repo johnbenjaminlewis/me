@@ -30,6 +30,7 @@ def deploy():
     """
     git_pull()
     pip_update()
+    run_tests()
     restart_wsgi()
 
 
@@ -52,4 +53,12 @@ def pip_update():
     """
     with virtualenv("benlew.is"):
         with cd('~/repos/me'):
-            run("pip install --ignore-installed -r requirements.txt")
+            run("./install.sh")
+
+
+def run_tests():
+    """Run test suite.
+    """
+    with virtualenv("benlew.is"):
+        with cd('~/repos/me'):
+            run("nosetests")
