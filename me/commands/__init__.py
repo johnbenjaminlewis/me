@@ -38,9 +38,10 @@ def create_cli(menu_groups):
     # Import menu groups
     try:
         menu_groups = [import_module(g, package=__name__) for g in menu_groups]
-    except ImportError:
+    except ImportError as e:
         click.secho('Cannot import module "{}" from package "{}"'.format(
                     g, __name__), fg='red', bold=True)
+        log.exception(e)
         raise SystemExit(1)
 
     # Register menu groups

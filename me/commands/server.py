@@ -4,7 +4,7 @@
 import logging
 import click
 
-from app import create_app
+from me.app import create_app
 
 
 log = logging.getLogger(__name__)

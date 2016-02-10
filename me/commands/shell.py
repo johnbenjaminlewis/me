@@ -2,7 +2,7 @@
 """
 import click
 
-from app import create_app
+from me.app import create_app
 
 
 def _create_context():

@@ -44,5 +44,5 @@ log.info("Logging configured!")
 
 
 if __name__ == '__main__':
-    from commands import cli_app
+    from me.commands import cli_app
     cli_app(obj={})

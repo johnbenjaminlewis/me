@@ -5,7 +5,7 @@ import os
 import flask
 from flask.ext.assets import Bundle, Environment
 
-from views import BLUEPRINTS
+from .views import BLUEPRINTS
 
 
 log = logging.getLogger(__name__)
