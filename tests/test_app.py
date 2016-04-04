@@ -1,6 +1,6 @@
 from nose.tools import ok_
 
-from app import create_app
+from me.app import create_app
 
 
 class TestApp(object):

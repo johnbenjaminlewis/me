@@ -43,15 +43,14 @@ def register_assets(app, debug=False):
     assets.append_path(app.root_path)
 
     site_js = Bundle(
-        'static_src/lib/jquery/jquery.js',
-        'static_src/lib/bootstrap/js/dist/*.js',
+        'static/app.js',
         filters=('uglifyjs',),
         output='js/bundle.js'
     )
     assets.register('site_js', site_js)
 
     site_css = Bundle(
-        'static_src/lib/bootstrap/dist/css/bootstrap.css',
+        'static/style.css',
         filters=('cssmin',),
         output='css/bundle.css'
     )
