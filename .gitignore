@@ -62,3 +62,6 @@ bundle*.css
 node_modules/**
 static/css/**
 static/js/**
+
+#config override
+override.yaml
