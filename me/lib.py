@@ -4,8 +4,6 @@ import os.path
 
 import yaml
 
-from .utils import deep_merge
-
 
 log = logging.getLogger(__name__)
 DEFAULT_SETTINGS = 'me/etc/default.yaml'
@@ -19,7 +17,7 @@ def _load_yaml(yaml_path):
 
 class Config(object):
     _pwd = os.path.dirname(os.path.realpath(__file__))
-    root_dir = os.path.realpath(os.path.join(_pwd, '..', '..'))
+    root_dir = os.path.realpath(os.path.join(_pwd, '..'))
     default_settings = _load_yaml(os.path.join(root_dir, DEFAULT_SETTINGS))
     override_settings = _load_yaml(os.path.join(root_dir, OVERRIDE_SETTINGS))
 
@@ -43,3 +41,24 @@ class Config(object):
     def __getattr__(self, name):
         msg = 'No attribute "{}". Have you initialized?'.format(name)
         raise AttributeError(msg)
+
+
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args,
+                                                                 **kwargs)
+        return cls._instances[cls]
+
+
+def deep_merge(base, updates):
+    """ apply updates to base dictionary
+    """
+    for key, value in updates.iteritems():
+        if key in base and isinstance(value, dict):
+            base[key] = deep_merge(base[key] or {}, value)
+        else:
+            base[key] = value
+    return base
