@@ -1,19 +1,27 @@
+from __future__ import absolute_import
 import logging
 import os.path
 
 import yaml
 
+from .utils import deep_merge
+
 
 log = logging.getLogger(__name__)
+DEFAULT_SETTINGS = 'me/etc/default.yaml'
+OVERRIDE_SETTINGS = 'me/etc/override.yaml'
+
+
+def _load_yaml(yaml_path):
+    with open(yaml_path) as f:
+        return yaml.load(f)
 
 
 class Config(object):
-    __name__ = __name__
-    _yaml = yaml
-
     _pwd = os.path.dirname(os.path.realpath(__file__))
     root_dir = os.path.realpath(os.path.join(_pwd, '..', '..'))
-    app_dir = os.path.join(root_dir, 'me')
+    default_settings = _load_yaml(os.path.join(root_dir, DEFAULT_SETTINGS))
+    override_settings = _load_yaml(os.path.join(root_dir, OVERRIDE_SETTINGS))
 
     def __init__(self):
         self.has_initialized = False
@@ -24,8 +32,7 @@ class Config(object):
         if self.has_initialized:
             log.warn('Cannot re-initialize config module')
             return
-        with open(os.path.join(self.app_dir, 'etc', 'default.yaml')) as f:
-            settings = yaml.load(f)
+        settings = deep_merge(self.default_settings, self.override_settings)
         self._init(settings)
 
     def _init(self, settings):
