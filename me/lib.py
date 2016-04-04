@@ -2,6 +2,10 @@ from __future__ import absolute_import
 import logging
 import os.path
 
+from cached_property import cached_property
+from sqlalchemy.engine.url import URL
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 import yaml
 
 
@@ -23,7 +27,7 @@ class Config(object):
 
     def __init__(self):
         self.has_initialized = False
-        self.hello_monster = 'Hi'
+        self._settings = None
 
     def init(self, use_test_mode=True):
         self.test_mode = bool(use_test_mode)
@@ -31,16 +35,21 @@ class Config(object):
             log.warn('Cannot re-initialize config module')
             return
         settings = deep_merge(self.default_settings, self.override_settings)
-        self._init(settings)
-
-    def _init(self, settings):
         self.has_initialized = True
         log.info('Initializing Application...')
-        self.settings = settings
+        self._settings = settings
 
-    def __getattr__(self, name):
-        msg = 'No attribute "{}". Have you initialized?'.format(name)
-        raise AttributeError(msg)
+    @cached_property
+    def settings(self):
+        if not self.has_initialized:
+            raise RuntimeError('')
+        return self._settings
+
+    @property
+    def main_db(self):
+        engine = create_engine(URL(**self.settings['db']['primary']))
+        Session = sessionmaker(bind=engine)
+        return Session()
 
 
 class Singleton(type):

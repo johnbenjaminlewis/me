@@ -31,7 +31,7 @@ class TestConfig(object):
 
     def test_config(self):
         ok_(self.config.has_initialized is False)
-        assert_raises(AttributeError, lambda: self.config.settings)
+        assert_raises(RuntimeError, lambda: self.config.settings)
         self.config.init()
         ok_(self.config.has_initialized)
         ok_(self.config.test_mode is True)

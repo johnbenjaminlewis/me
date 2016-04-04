@@ -1,1 +1,9 @@
 name: benlew.is
+db:
+  primary:
+    drivername: postgres
+    host: localhost
+    port: 5432
+    username: postgres
+    password: ''
+    database: me
