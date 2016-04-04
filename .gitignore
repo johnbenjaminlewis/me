@@ -57,6 +57,8 @@ docs/_build/
 target/
 
 *.webassets*
+bundle*.js
+bundle*.css
 node_modules/**
 static/css/**
 static/js/**
