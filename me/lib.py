@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from collections import namedtuple
 import logging
 import os.path
 
@@ -12,6 +13,7 @@ import yaml
 log = logging.getLogger(__name__)
 DEFAULT_SETTINGS = 'me/etc/default.yaml'
 OVERRIDE_SETTINGS = 'me/etc/override.yaml'
+Db = namedtuple('Db', ('url', 'session', 'config'))
 
 
 def _load_yaml(yaml_path):
@@ -47,9 +49,11 @@ class Config(object):
 
     @property
     def main_db(self):
-        engine = create_engine(URL(**self.settings['db']['primary']))
+        config = self.settings['db']['primary']
+        db_url = URL(**config)
+        engine = create_engine(db_url)
         Session = sessionmaker(bind=engine)
-        return Session()
+        return Db(db_url, Session(), config)
 
 
 class Singleton(type):
