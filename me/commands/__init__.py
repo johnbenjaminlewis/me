@@ -10,6 +10,8 @@ from importlib import import_module
 
 import click
 
+import me
+
 
 MENU_GROUPS = (
     '.server',
@@ -34,6 +36,7 @@ def create_cli(menu_groups):
             click.secho('Using test mode', fg='green', err=True)
         else:
             click.secho('Using production mode!', fg='yellow', err=True)
+        me.config.init(test_mode)
 
     # Import menu groups
     try:

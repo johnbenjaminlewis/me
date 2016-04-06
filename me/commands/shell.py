@@ -25,6 +25,7 @@ def ipython(ctx):
         click.secho('Cannot import IPython. Try `pip install IPython`')
 
     locals().update(_create_context())
+    import me
     from me import config
     cfg = config
     from me import models
