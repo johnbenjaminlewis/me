@@ -1,9 +1,17 @@
 name: benlew.is
 db:
-  primary:
-    drivername: postgres
-    host: localhost
-    port: 5432
-    username: postgres
-    password: ''
-    database: me
+  main_db:
+    prod:
+      drivername: postgres
+      host: localhost
+      port: 5432
+      username: postgres
+      password: ''
+      database: me
+    test:
+      drivername: postgres
+      host: localhost
+      port: 5432
+      username: postgres
+      password: ''
+      database: me_test
