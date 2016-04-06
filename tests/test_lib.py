@@ -3,6 +3,27 @@ from nose.tools import assert_raises, eq_, ok_
 from me import lib
 
 
+class TestConfig(object):
+
+    def test_test_mode(self):
+        conf = lib.Config()
+        eq_(conf.has_initialized, False)
+        assert_raises(RuntimeError, lambda: conf.something)
+        conf.init()
+        eq_(conf.has_initialized, True)
+        eq_(conf.test_mode, True)
+        assert_raises(AttributeError, lambda: conf.something)
+
+    def test_prod_mode(self):
+        conf = lib.Config()
+        eq_(conf.has_initialized, False)
+        assert_raises(RuntimeError, lambda: conf.something)
+        conf.init(False)
+        eq_(conf.has_initialized, True)
+        eq_(conf.test_mode, False)
+        assert_raises(AttributeError, lambda: conf.something)
+
+
 def test_deep_merge():
     original = {'a': 1, 'b': 2}
     updates = {'b': 4}
@@ -23,15 +44,3 @@ def test_singleton():
         __metaclass__ = lib.Singleton
 
     ok_(A() is A())
-
-
-class TestConfig(object):
-    def setup(self):
-        self.config = lib.Config()
-
-    def test_config(self):
-        ok_(self.config.has_initialized is False)
-        assert_raises(RuntimeError, lambda: self.config.settings)
-        self.config.init()
-        ok_(self.config.has_initialized)
-        ok_(self.config.test_mode is True)
