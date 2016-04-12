@@ -14,6 +14,7 @@ import me
 
 
 MENU_GROUPS = (
+    '.db',
     '.server',
     '.shell',
 )
