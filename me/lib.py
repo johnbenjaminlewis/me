@@ -58,6 +58,8 @@ def _runonce(fn):
 class Config(object):
     _pwd = os.path.dirname(os.path.realpath(__file__))
     root_dir = os.path.realpath(os.path.join(_pwd, '..'))
+    migrations_dir = os.path.join(root_dir, 'sql')
+
     default_settings = _load_yaml(os.path.join(root_dir, DEFAULT_SETTINGS))
     override_settings = _load_yaml(os.path.join(root_dir, OVERRIDE_SETTINGS))
 
