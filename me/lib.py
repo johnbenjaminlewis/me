@@ -10,7 +10,8 @@ import os.path
 
 from sqlalchemy.engine.url import URL
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, scoped_session
 import yaml
 
 
@@ -55,6 +56,33 @@ def _runonce(fn):
     return decorated
 
 
+class DB(object):
+    def __init__(self, db_url):
+        self.db_url = db_url
+        self.engine = create_engine(db_url)
+        # don't expire on commit, allowing the instantiated object to be
+        # accessed without issuing a new DB query. If you want the updated
+        # attrs, you need to manually query.
+        self.session = scoped_session(sessionmaker(autocommit=False,
+                                                   autoflush=False,
+                                                   bind=self.engine,
+                                                   expire_on_commit=False))
+
+        def save_instance(instance):
+            self.session.add(instance)
+            try:
+                self.session.commit()
+            except Exception as e:
+                config_log.exception(e)
+                self.session.rollback()
+                raise
+
+        Base = declarative_base()
+        Base.query = self.session.query_property()
+        Base.save = save_instance
+        self.BaseModel = Base
+
+
 class Config(object):
     _pwd = os.path.dirname(os.path.realpath(__file__))
     root_dir = os.path.realpath(os.path.join(_pwd, '..'))
@@ -86,13 +114,8 @@ class Config(object):
         runtime_str = 'test' if self.test_mode else 'prod'
 
         for db_name, config in self.settings['db'].iteritems():
-            engine = create_engine(URL(**config[runtime_str]))
-            # don't expire on commit, allowing the instantiated object to be
-            # accessed without issuing a new DB query. If you want the updated
-            # attrs, you need to manually query.
-            Session = sessionmaker(bind=engine, expire_on_commit=False)
-            db_attr = Db(Session, engine, session_manager_create(Session))
-            setattr(self, db_name, db_attr)
+            db_url = URL(**config[runtime_str])
+            setattr(self, db_name, DB(db_url))
 
 
 class Singleton(type):

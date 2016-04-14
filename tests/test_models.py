@@ -1,6 +1,5 @@
-from nose.tools import eq_
+from nose.tools import assert_raises, eq_
 
-from me import config
 from me.models import User
 from . import utils
 
@@ -10,12 +9,11 @@ class TestUser(object):
         utils.clean_slate()
 
     def test_create(self):
-        user = User(username='joe', name='joe')
-        with config.main_db.session_manager() as s:
-            s.add(user)
+        User(username='joe', name='joe').save()
 
-        with config.main_db.session_manager() as s:
-            res = s.query(User).all()
-            s.expunge(res[0])
+        res = User.query.all()
         eq_(len(res), 1)
         eq_(res[0].username, 'joe')
+
+        duplicate_user = User(username='joe', name='joe')
+        assert_raises(Exception, lambda: duplicate_user.save())

@@ -2,9 +2,8 @@
 """
 import contextlib
 
-from me.models import Base
-
 from me import config
+import me.models
 
 
 def clean_slate():
@@ -12,6 +11,6 @@ def clean_slate():
     """
     with contextlib.closing(config.main_db.engine.connect()) as con:
         trans = con.begin()
-        for table in reversed(Base.metadata.sorted_tables):
+        for table in reversed(config.main_db.BaseModel.metadata.sorted_tables):
             con.execute(table.delete())
         trans.commit()

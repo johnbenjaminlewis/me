@@ -1,10 +1,8 @@
 import datetime as dt
 
 import sqlalchemy as sa
-from sqlalchemy.ext.declarative import declarative_base
 
-
-Base = declarative_base()
+from me import config
 
 
 class TrackedTableMixin(object):
@@ -17,13 +15,13 @@ class TrackedTableMixin(object):
 
 user_images = sa.Table(
         'user_images',
-        Base.metadata,
+        config.main_db.BaseModel.metadata,
         sa.Column('user_id', sa.BigInteger, sa.ForeignKey('users.user_id')),
         sa.Column('image_id', sa.BigInteger, sa.ForeignKey('images.image_id'))
 )
 
 
-class User(TrackedTableMixin, Base):
+class User(TrackedTableMixin, config.main_db.BaseModel):
     __tablename__ = 'users'
     user_id = sa.Column(sa.BigInteger, primary_key=True)
     name = sa.Column(sa.Text, nullable=False)
@@ -38,7 +36,7 @@ class User(TrackedTableMixin, Base):
                                             self.username)
 
 
-class Image(TrackedTableMixin, Base):
+class Image(TrackedTableMixin, config.main_db.BaseModel):
     __tablename__ = 'images'
     image_id = sa.Column(sa.BigInteger, primary_key=True)
     cdn_url = sa.Column(sa.Text, nullable=False)
