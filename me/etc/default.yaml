@@ -2,16 +2,10 @@ name: benlew.is
 db:
   main_db:
     prod:
-      drivername: postgres
-      host: localhost
-      port: 5432
-      username: postgres
-      password: ''
-      database: me
+      migration: "postgresql://postgres:***@localhost:5432/me?sslmode=disable"
+      read: "postgresql://postgres:***@localhost:5432/me?sslmode=disable"
+      write: "postgresql://postgres:***@localhost:5432/me?sslmode=disable"
     test:
-      drivername: postgres
-      host: localhost
-      port: 5432
-      username: postgres
-      password: ''
-      database: me_test
+      migration: "postgresql://postgres:***@localhost:5432/me_test?sslmode=disable"
+      read: "postgresql://postgres:***@localhost:5432/me_test?sslmode=disable"
+      write: "postgresql://postgres:***@localhost:5432/me_test?sslmode=disable"

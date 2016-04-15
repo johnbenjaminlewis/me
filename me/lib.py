@@ -2,13 +2,11 @@
 modules here.
 """
 from __future__ import absolute_import
-from collections import namedtuple
 from contextlib import contextmanager
 from functools import wraps
 import logging
 import os.path
 
-from sqlalchemy.engine.url import URL
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -56,16 +54,16 @@ def _runonce(fn):
 
 
 class Db(object):
-    def __init__(self, db_url):
-        self.db_url = db_url
-        self.engine = create_engine(db_url)
+    def __init__(self, dsns):
+        self.dsns = dsns
+        self.engines = {n: create_engine(d) for n, d in dsns.iteritems()}
         # don't expire on commit, allowing the instantiated object to be
         # accessed without issuing a new DB query. If you want the updated
         # attrs, you need to manually query.
-        self.session = scoped_session(sessionmaker(autocommit=False,
-                                                   autoflush=False,
-                                                   bind=self.engine,
-                                                   expire_on_commit=False))
+        factory = sessionmaker(autocommit=False, autoflush=False,
+                               bind=self.engines['migration'],
+                               expire_on_commit=False)
+        self.session = scoped_session(factory)
         self.session_manager = session_manager_create(self.session)
 
         def save_instance(instance):
@@ -112,10 +110,9 @@ class Config(object):
 
     def _setup_db(self):
         runtime_str = 'test' if self.test_mode else 'prod'
-
         for db_name, config in self.settings['db'].iteritems():
-            db_url = URL(**config[runtime_str])
-            setattr(self, db_name, Db(db_url))
+            dsns = config[runtime_str]
+            setattr(self, db_name, Db(dsns))
 
 
 def deep_merge(base, updates):
