@@ -37,10 +37,3 @@ def test_deep_merge():
     eq_(merged['a'], 1)
     eq_(merged['b']['z'], 1)
     eq_(merged['b']['x'], 'b')
-
-
-def test_singleton():
-    class A(object):
-        __metaclass__ = lib.Singleton
-
-    ok_(A() is A())

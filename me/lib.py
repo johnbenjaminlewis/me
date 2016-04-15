@@ -17,7 +17,6 @@ import yaml
 
 log = logging.getLogger(__name__)
 config_log = logging.getLogger('.'.join((__name__.split('.')[0], 'config')))
-Db = namedtuple('Db', ('Session', 'engine', 'session_manager'))
 
 
 DEFAULT_SETTINGS = 'me/etc/default.yaml'
@@ -56,7 +55,7 @@ def _runonce(fn):
     return decorated
 
 
-class DB(object):
+class Db(object):
     def __init__(self, db_url):
         self.db_url = db_url
         self.engine = create_engine(db_url)
@@ -67,6 +66,7 @@ class DB(object):
                                                    autoflush=False,
                                                    bind=self.engine,
                                                    expire_on_commit=False))
+        self.session_manager = session_manager_create(self.session)
 
         def save_instance(instance):
             self.session.add(instance)
@@ -115,17 +115,7 @@ class Config(object):
 
         for db_name, config in self.settings['db'].iteritems():
             db_url = URL(**config[runtime_str])
-            setattr(self, db_name, DB(db_url))
-
-
-class Singleton(type):
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args,
-                                                                 **kwargs)
-        return cls._instances[cls]
+            setattr(self, db_name, Db(db_url))
 
 
 def deep_merge(base, updates):
