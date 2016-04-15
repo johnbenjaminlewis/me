@@ -45,3 +45,18 @@ def test_stentinel_int():
         ok_(s != n)
         ok_(s != lib.SentinelInt(n))
         eq_(int(s), n)
+
+
+def test_sorted_return():
+    def gen_simple_list():
+        return range(10)[::-1]
+
+    def gen_list_of_dicts():
+        return [{'a': n} for n in range(10)[::-1]]
+
+    simple_list = lib.sorted_return(gen_simple_list)()
+    eq_(range(10), simple_list)
+
+    value_sort = lambda d: d['a']
+    list_of_dicts = lib.sorted_return(key=value_sort)(gen_list_of_dicts)()
+    eq_(range(10), [d['a'] for d in list_of_dicts])

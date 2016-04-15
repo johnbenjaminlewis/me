@@ -140,3 +140,18 @@ class SentinelInt(int):
 
     def __ne__(self, other):
         return self.__eq__(other) is False
+
+
+def sorted_return(*a, **sorted_kwargs):
+    """ Decorator with optional arguments that sorts output of
+    decorated function.
+    """
+    def _sorted_return(fn):
+        @wraps(fn)
+        def decorated(*args, **kwargs):
+            res = fn(*args, **kwargs)
+            return sorted(res, **sorted_kwargs)
+        return decorated
+    if len(a) == 1 and callable(a[0]):
+        return _sorted_return(a[0])
+    return _sorted_return
