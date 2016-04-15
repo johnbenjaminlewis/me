@@ -37,3 +37,11 @@ def test_deep_merge():
     eq_(merged['a'], 1)
     eq_(merged['b']['z'], 1)
     eq_(merged['b']['x'], 'b')
+
+
+def test_stentinel_int():
+    for n in range(10):
+        s = lib.SentinelInt(n)
+        ok_(s != n)
+        ok_(s != lib.SentinelInt(n))
+        eq_(int(s), n)

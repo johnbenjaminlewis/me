@@ -127,3 +127,16 @@ def deep_merge(base, updates):
         else:
             base[key] = value
     return base
+
+
+class SentinelInt(int):
+    """Makes unique sentinel values that look like integers but equality
+    is overridden.
+    """
+    __slots__ = [e for e in dir(int) if not e.startswith('_')]
+
+    def __eq__(self, other):
+        return self is other
+
+    def __ne__(self, other):
+        return self.__eq__(other) is False
