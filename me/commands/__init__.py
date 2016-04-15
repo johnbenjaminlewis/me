@@ -29,7 +29,7 @@ def create_cli(menu_groups):
     :param menu_groups: a list of package names to import
     """
     @click.group(help=__doc__.format(this_file=__file__))
-    @click.option('--test_mode', default=False, is_flag=True,
+    @click.option('--test-mode', default=False, is_flag=True,
                   help='Use test config')
     @click.pass_context
     def cli_app(ctx, test_mode):
